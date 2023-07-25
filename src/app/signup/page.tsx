@@ -3,6 +3,7 @@ import Link from "next/link"
 import React, { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
+import { toast } from "react-hot-toast"
 
 export default function Signup() {
     const router = useRouter();
@@ -12,8 +13,20 @@ export default function Signup() {
         username: "",
     })
     const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const onSignup = async () => {
-
+        try {
+            setLoading(true);
+            const response = await axios.post("/api/users/signup", user);
+            console.log("Signup success", response.data);
+            toast.success("Signup Successfully");
+            router.push("/login");
+        } catch (error:any) {
+            console.log("Signup failed: ", error);
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -29,7 +42,7 @@ export default function Signup() {
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white-900">Sign up to your account</h2>
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white-900">{loading ? "Loading..." : "Signup to your account"}</h2>
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -69,7 +82,7 @@ export default function Signup() {
                     </div>
 
                     <div>
-                        <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{buttonDisabled ? "Can't signup" : "Sign up"}</button>
+                        <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={onSignup}>{buttonDisabled ? "Can't signup" : "Sign up"}</button>
                     </div>
                 </form>
                 <Link href="/login" className="text-center font-semibold leading-6 text-indigo-600 hover:text-indigo-500">

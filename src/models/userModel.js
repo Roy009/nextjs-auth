@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 // model of our database
 const userSchema = new mongoose.Schema({
     username:{
-        type: Stirng,
+        type: String,
         required: [true, "Please provide a username"],
         unique: true,
     },
